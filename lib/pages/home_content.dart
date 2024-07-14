@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:softbd/pages/square.dart';
+import '../widget/circular_countdown_timer.dart';
 import '../widget/item_widget.dart';
 
 class HomePageContent extends StatelessWidget {
@@ -103,11 +104,20 @@ class HomePageContent extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     height: 180,
-                    child: const Align(
+                    child:  Align(
                       alignment: Alignment.bottomCenter,
-                      child: Text(
-                        'সময় অতিবাহিত',
-                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top:16.0),
+                        child: Column(
+                          children: [
+                            CountdownPage(),
+                            const SizedBox(height: 8,),
+                            const Text(
+                              'সময় অতিবাহিত',
+                              style: TextStyle(color: Colors.black, fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

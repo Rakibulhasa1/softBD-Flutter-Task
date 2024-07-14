@@ -7,11 +7,11 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart Page'),
+        title: const Text('History Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text(
-          'Cart Page Content',
+          'Under Construction',
           style: TextStyle(fontSize: 24),
         ),
       ),
