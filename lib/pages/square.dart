@@ -8,7 +8,7 @@ class SquareBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 30,
+      width: 28,
       height: 30,
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(

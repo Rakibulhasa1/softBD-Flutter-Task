@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:softbd/pages/history_page.dart';
 import 'package:softbd/pages/profile_page.dart';
 import 'calender_page.dart';
@@ -37,7 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: _bottomNavIndex == 0
+          ? AppBar(
         title: Row(
           children: <Widget>[
             Image.asset(
@@ -62,7 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
-      ),
+      )
+          : null,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -106,53 +107,68 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Stack(
-        children: [
-          AnimatedBottomNavigationBar(
-            icons: const [
-              Icons.home,
-              Icons.calendar_month_rounded,
-              Icons.history,
-              Icons.person,
-            ],
-            activeIndex: _bottomNavIndex,
-            gapLocation: GapLocation.center,
-            notchSmoothness: NotchSmoothness.defaultEdge,
-            onTap: (index) {
-              setState(() => _bottomNavIndex = index);
-              _pageController.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-            backgroundColor: Colors.white,
-            activeColor: Colors.black,
-            inactiveColor: Colors.black,
-            iconSize: 24,
-            splashColor: Colors.blue.withOpacity(0.3),
-            splashSpeedInMilliseconds: 300,
-            splashRadius: 20,
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _bottomNavIndex,
+        onTap: (index) {
+          setState(() => _bottomNavIndex = index);
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatelessWidget {
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const CustomBottomNavigationBar({
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: Offset(0, -1),
           ),
-          Positioned(
-            bottom: 6,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(4, (index) {
-                return Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _bottomNavIndex == index
-                        ? Color(0xff578e54)
-                        : Colors.transparent,
-                  ),
-                );
-              }),
-            ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(0, 'icons/home.png',),
+          _buildNavItem(1, 'icons/calender.png', ),
+          _buildNavItem(2, 'icons/history.png', ),
+          _buildNavItem(3, 'icons/profile.png', ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, String iconPath,) {
+    return GestureDetector(
+      onTap: () => onTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            iconPath,
+            width: 24,
+            height: 24,
+            color: index == currentIndex ? Colors.black : Colors.grey,
           ),
         ],
       ),

@@ -1,11 +1,60 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:softbd/pages/square.dart';
 import '../widget/circular_countdown_timer.dart';
 import '../widget/item_widget.dart';
 
-class HomePageContent extends StatelessWidget {
+class HomePageContent extends StatefulWidget {
+
+  @override
+  State<HomePageContent> createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<HomePageContent> {
+  late Timer _timer;
+  Duration _duration = Duration(days: 5 * 30 + 6, seconds: 12);
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_duration.inSeconds > 0) {
+          _duration = _duration - Duration(seconds: 1);
+        } else {
+          _timer.cancel();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+  List<String> _formatDuration(Duration duration) {
+    int months = (duration.inDays / 30).floor();
+    int days = (duration.inDays % 30);
+    int seconds = duration.inSeconds % 60;
+    return [
+      _convertToBengali(months ~/ 10), _convertToBengali(months % 10),
+      _convertToBengali(days ~/ 10), _convertToBengali(days % 10),
+      _convertToBengali(seconds ~/ 10), _convertToBengali(seconds % 10)
+    ];
+  }
+
+  String _convertToBengali(int number) {
+    final numbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return numbers[number];
+  }
   @override
   Widget build(BuildContext context) {
+    List<String> formattedTime = _formatDuration(_duration);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,15 +213,17 @@ class HomePageContent extends StatelessWidget {
                           'আরও বাকি',
                           style: TextStyle(color: Colors.red, fontSize: 18),
                         ),
-                        const Row(
+                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SquareBox(text: "০"),
-                            SquareBox(text: "৫"),
-                            SquareBox(text: "০"),
-                            SquareBox(text: "৬"),
-                            SquareBox(text: "১"),
-                            SquareBox(text: "২"),
+                            SquareBox(text: formattedTime[0]),
+                            SquareBox(text: formattedTime[1]),
+                            const Text("   ", style: TextStyle(fontSize: 16)),
+                            SquareBox(text: formattedTime[2]),
+                            SquareBox(text: formattedTime[3]),
+                            const Text("   ", style: TextStyle(fontSize: 16)),
+                            SquareBox(text: formattedTime[4]),
+                            SquareBox(text: formattedTime[5]),
                           ],
                         ),
                         const Row(

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class TodoPage extends StatefulWidget {
@@ -20,23 +18,74 @@ class _TodoPageState extends State<TodoPage> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      final response = await http.post(
-        Uri.parse('https://api.npoint.io/bc69ae1f6991da81ab9a'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "name": _name,
-          "category": _category,
-          "location": _location,
-          "date": (_date.millisecondsSinceEpoch / 1000).round().toString(),
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Todo added successfully')));
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to add todo')));
+      await Future.delayed(const Duration(seconds: 1));
+      bool isSuccess = true;
+      if (isSuccess) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('নতুন অনুচ্ছেদ সংরক্ষন'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Image.asset(
+                      'icons/60-Checked.png',
+                      height: 100,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 120.0),
+                      child: const Text('আপনার সময়রেখাতে নতুন অনুচ্ছেদ সংরক্ষণ সম্পুর্ন হয়েছে',style: TextStyle(fontSize: 16),),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              Ink(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF72a35a),
+                      Color(0xFF437b4d),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>TodoPage()));
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width /3,
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'আরও যোগ করুন',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop({
+                    "name": _name,
+                    "category": _category,
+                    "location": _location,
+                    "date": (_date.millisecondsSinceEpoch / 1000).round().toString(),
+                  });
+                },
+                child: const Text('ওকে'),
+              ),
+            ],
+          ),
+        );
       }
     }
   }

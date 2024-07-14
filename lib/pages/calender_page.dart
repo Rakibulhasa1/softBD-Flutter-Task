@@ -35,6 +35,12 @@ class _CalenderPageState extends State<CalenderPage> {
     }
   }
 
+  void addNewTodo(Map<String, dynamic> newTodo) {
+    setState(() {
+      data.add(newTodo);
+    });
+  }
+
   String getTodayDateInBengali() {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('d MMMM').format(now);
@@ -84,6 +90,7 @@ class _CalenderPageState extends State<CalenderPage> {
 
     return '$formattedTime মি.';
   }
+
   String formatTimeToBangla(DateTime dateTime) {
     String period = DateFormat('a', 'bn').format(dateTime);
     String formattedTime = DateFormat('h:mm', 'bn').format(dateTime);
@@ -96,6 +103,7 @@ class _CalenderPageState extends State<CalenderPage> {
 
     return '$period \n$formattedTime মি.';
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +120,7 @@ class _CalenderPageState extends State<CalenderPage> {
           ),
         ],
       ),
+      drawer: Drawer(),
       body: Column(
         children: [
           Padding(
@@ -129,11 +138,15 @@ class _CalenderPageState extends State<CalenderPage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TodoPage()));
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TodoPage()),
+                          );
+
+                          if (result != null) {
+                            addNewTodo(result);
+                          }
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width / 3,
@@ -174,19 +187,23 @@ class _CalenderPageState extends State<CalenderPage> {
                     child: data.isEmpty
                         ? const Center(child: CircularProgressIndicator())
                         : ListView.builder(
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(data[index]['date']) * 1000);
-                        String formattedTime = formatTimeToBangla(dateTime);
-                        return Container(
-                          padding: const EdgeInsets.only(left: 10, top: 40.0, bottom: 20),
-                          child: Text(
-                            formattedTime,
-                            style: const TextStyle(color: Colors.black),
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              DateTime dateTime =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      int.parse(data[index]['date']) * 1000);
+                              String formattedTime =
+                                  formatTimeToBangla(dateTime);
+                              return Container(
+                                padding: const EdgeInsets.only(
+                                    left: 10, top: 40.0, bottom: 20),
+                                child: Text(
+                                  formattedTime,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
                 Expanded(
@@ -194,59 +211,69 @@ class _CalenderPageState extends State<CalenderPage> {
                   child: data.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(data[index]['date']) * 1000);
-                      String formattedTime = formatTimeToBangla(dateTime);
-                      List<LinearGradient> gradients = [
-                        const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFF72a35a), Color(0xFF437b4d)],
-                        ),
-                        const LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Colors.black, Colors.grey],
-                        ),
-                      ];
-                      LinearGradient currentGradient = gradients[index % gradients.length];
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            DateTime dateTime =
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    int.parse(data[index]['date']) * 1000);
+                            String formattedTime = formatTimeToBangla(dateTime);
+                            List<LinearGradient> gradients = [
+                              const LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [Color(0xFF72a35a), Color(0xFF437b4d)],
+                              ),
+                              const LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [Colors.black, Colors.grey],
+                              ),
+                            ];
+                            LinearGradient currentGradient =
+                                gradients[index % gradients.length];
 
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        decoration: BoxDecoration(
-                          gradient: currentGradient,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              decoration: BoxDecoration(
+                                gradient: currentGradient,
+                                borderRadius: BorderRadius.circular(10.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  '$formattedTime',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(data[index]['name'],
+                                        style: const TextStyle(
+                                            color: Colors.white)),
+                                    Text('${data[index]['category']}',
+                                        style: const TextStyle(
+                                            color: Colors.white)),
+                                    Text('${data[index]['location']}',
+                                        style: const TextStyle(
+                                            color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        child: ListTile(
-                          title: Text(
-                            '$formattedTime',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(data[index]['name'], style: const TextStyle(color: Colors.white)),
-                              Text('${data[index]['category']}', style: const TextStyle(color: Colors.white)),
-                              Text('${data[index]['location']}', style: const TextStyle(color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
