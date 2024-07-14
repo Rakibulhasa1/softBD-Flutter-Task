@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:softbd/pages/square.dart';
-
 import '../widget/item_widget.dart';
 
 class HomePageContent extends StatelessWidget {

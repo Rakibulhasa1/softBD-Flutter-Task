@@ -1,18 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
-import 'package:circular_countdown_timer/countdown_text_format.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:softbd/pages/history_page.dart';
 import 'package:softbd/pages/profile_page.dart';
-import 'package:softbd/pages/search_page.dart';
-import 'package:softbd/pages/square.dart';
-import 'package:softbd/widget/item_widget.dart';
-
 import 'calender_page.dart';
-
-import 'package:flutter/material.dart';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
 import 'home_content.dart';
 
 void main() {
@@ -78,8 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
           children: const <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-              ),
+              decoration: BoxDecoration(),
               child: Text('Soft BD'),
             ),
           ],
@@ -170,4 +159,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
